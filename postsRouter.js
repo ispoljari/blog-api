@@ -21,8 +21,8 @@ BlogPosts.create('Inspirational Quote', 'Live as if you were to die tommorow. Le
 BlogPosts.create('Lady Windermere\'s Fan', 'We are all in the gutter, but some of us are looking at the stars.', 'Oscar Wilde', '3/17/1893');
 
 // GET requests route handler
-app.get('/', (req, res) => {
-  res.json(BlogPosts.get(id));
+router.get('/', (req, res) => {
+  res.json(BlogPosts.get());
 });
 
 
