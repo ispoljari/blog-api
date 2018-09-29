@@ -26,9 +26,7 @@ router.get('/', (req, res) => {
   res.json(BlogPosts.get());
 });
 
-// POST request route handler
-router.post('/', jsonParser, (req, res) => {
-  const requiredFields = ['title', 'content', 'author', 'publishDate'];
+function validateRequiredFields(req, res, requiredFields) {
   for (let i=0; i<requiredFields.length; i++) {
     if(!(requiredFields[i] in req.body)) {
       const message = `The required field ${requiredFields[i]} is missing from the request body`
@@ -36,9 +34,35 @@ router.post('/', jsonParser, (req, res) => {
       res.status(400).send(message);
     }
   }
+}
+
+// POST request route handler
+router.post('/', jsonParser, (req, res) => {
+ validateRequiredFields(req, res, ['title', 'content', 'author', 'publishDate']);
 
   const post = BlogPosts.create(req.body.title, req.body.content, req.body.author, req.body.publishDate);
-  res.status(201).json(post)
+  res.status(201).json(post);
+});
+
+// PUT route handler 
+router.put('/:id', jsonParser, (req, res) => {
+  validateRequiredFields(req, res, ['id', 'title', 'content', 'author', 'publishDate']);
+
+  if (req.params.id !== req.body.id) {
+    const message = `The url id ${req.params.id} is different from the body id ${req.body.id}`
+    console.error(message);
+    res.status(400).send(message);
+  }
+
+  console.log(`Updating blog with post ${req.params.id}`);
+  const updatedPost = BlogPosts.update({
+    id: req.params.id,
+    title: req.body.title,
+    content: req.body.content,
+    author: req.body.author,
+    publishDate: req.body.publishDate
+  });
+  res.status(204).end();
 });
 
 
